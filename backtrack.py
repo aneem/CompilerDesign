@@ -1,6 +1,7 @@
 from grammar import Grammar
 from node import Node
 
+# works for string grammar but not for list grammar
 
 class string_node(Node):
 

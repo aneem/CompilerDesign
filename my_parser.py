@@ -21,19 +21,19 @@ def parsePR(rules):
             tuplelist = []
             for each_RHS in rhs:
                 each_RHS = each_RHS.strip()
-                # print each_RHS
-                terminal = get_terminals(each_RHS, non_terminals)
-                if not terminal :
-                    terminals = terminals+terminal
 
-                dummy_tuple = (dummy_list[0], each_RHS)
+                result = get_rule_and_terminals(each_RHS, non_terminals)
+                rule=result[0]
+                each_terminal=result[1]
+                terminals.extend(each_terminal)
+                dummy_tuple = (dummy_list[0], rule)
                 tuplelist.append(dummy_tuple)
         else:
-            terminal = get_terminals(dummy_list[1].strip(), non_terminals)
-            if terminal != []:
-                terminals = terminals+terminal
-            tuplelist = [(dummy_list[0], dummy_list[1].strip())]
-
+            result = get_rule_and_terminals(dummy_list[1].strip(), non_terminals)
+            rule=result[0]
+            each_terminal=result[1]
+            tuplelist = [(dummy_list[0],rule)]
+        terminals.extend(each_terminal)
         production_rules[dummy_list[0]] = tuplelist
 
     terminals = list(set(terminals))
@@ -62,34 +62,34 @@ def get_non_terminals(rules):
     return non_terminals
 
 
-def get_terminals(text, non_terminals):
-    #text=AbBBac  *FY
-    terminal = []
+def get_rule_and_terminals(text, non_terminals):
     result = has_non_terminal(text, non_terminals)
+
+    reverse_result=result[:]
+    reverse_result.reverse()
+    rule=list(text)
     if result:
-        for i in result:
-            terminal = terminal + text.split(i)
-        # terminal=list(set(terminal))
-        while '' in terminal:
-            terminal.remove('')
-        for i in result:
-            for index, item in enumerate(terminal):
-                if (i in item):
-                    terminal.pop(index)
+        for i in reverse_result:
+ 
+            del rule[i[1]:i[1]+len(i[0])]
 
-        return terminal
-        # return ''.join(terminal)
+
+        terminals=set(rule)
+
+        for i in result:
+            rule.insert(i[1],i[0])
+
+        return list(rule),set(terminals)
     else:
-        return [text]
+        return rule,rule
 
-    # terminals.append(terminal)
 
 
 def has_non_terminal(text, non_terminals):
     nt = []
     for item in non_terminals:
         if item in text:
-            nt.append(item)
+            nt.append((item,text.index(item)))
     return nt
 
 
@@ -102,8 +102,8 @@ def remove_left_recursion_and_left_factoring(rules, switch):
         for item in individual_rules:
             LRrule = rules[key]
 
-            case1 = item[1].startswith(item[0]) and switch
-            case2 = has_left_factoring(individual_rules) and switch
+            case1 = item[1][0]==item[0] and switch==0
+            case2 = has_left_factoring(individual_rules) and switch==1
             if case1:
                 # Left Recursion true
                 print 'dealing with left recursion'
@@ -137,7 +137,7 @@ def create_non_left_factoring_rules(rules):
     dic = {}
     non_terminal = rules[0][0]
     new_non_terminal = non_terminal+"'"
-    tuple_=(non_terminal, first+new_non_terminal)
+    tuple_=(non_terminal, [first]+[new_non_terminal])
     dic[non_terminal] = [tuple_]
 
     new_terminal_rules = []
@@ -156,24 +156,26 @@ def create_non_left_recursive_rules(LRrule):
     tuple_list_m = []
     tuple_list_n = []
     for rule in LRrule:
-        if rule[1].startswith(rule[0]):
+        # for A->A alpha
+        if rule[1][0]==rule[0]:
             m += 1
             tuple_list_m.append(rule)
+        # for A-> beta
         else:
             n += 1
             tuple_list_n.append(rule)
-    new_non_terminal = rule[0]+'\''
+    new_non_terminal = rule[0]+"'"
     # print tuple_list_m,tuple_list_n
     for x in tuple_list_n:
-        dummy_tuple = (x[0], x[1]+new_non_terminal)
+        dummy_tuple = (x[0], list(x[1])+[new_non_terminal])
         tuple_list_1.append(dummy_tuple)
     dic[LRrule[0][0]] = tuple_list_1
     for y in tuple_list_m:
-        alpha = (y[1])
-        alpha = alpha.replace(rule[0], '', 1)
-        dummy_tuple = (new_non_terminal, alpha+new_non_terminal)
+        alpha = y[1][1:]
+        dummy_tuple = (new_non_terminal, alpha+[new_non_terminal])
+        # print dummy_tuple
         tuple_list_2.append(dummy_tuple)
-    tuple_list_2.append((new_non_terminal, ''))
+    tuple_list_2.append((new_non_terminal, ['']))
     dic[new_non_terminal] = tuple_list_2
 
     return dic
@@ -183,9 +185,9 @@ def create_non_left_recursive_rules(LRrule):
 
 rule1 = 'S->A+B|A*B\
     ,A->Ac|Ab|f \
-    ,B->c|d'
+    # ,B->c|d'
 # result=parsePR(rulz)
 # removeLeftRecursion(result[2])
 
 rule2 = 'S->aA|aB,A->h,B->i'
-# result=parsePR(rule2)
+result=parsePR(rule1)

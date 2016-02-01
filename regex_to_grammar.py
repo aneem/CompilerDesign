@@ -53,6 +53,7 @@ class RegexToGrammar(object):
         
         print "Grammar: ",
         grammar_.print_grammar()
+        print grammar_.grammar[2]
         print '\n-----------------  END regex_to_grammar -----------------\n\n'
         return grammar_
 

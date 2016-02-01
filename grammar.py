@@ -95,6 +95,8 @@ class Grammar(object):
         """ create individual rule for printing rule """
         formattedRule = rules[0][0] + ' -> '
         for i, rule in enumerate(rules):
+            if rules[i][1]=='':
+                formattedRule += "'e'"
             formattedRule += rules[i][1] + ' | '
         return formattedRule[:-3]
 
