@@ -65,15 +65,13 @@ class SLRParser(object):
         string = string+['$']
         input_buffer = list(string)
         stack = [0]
-        stack_ptr = input_ptr = 0
 
-        i = 0
-        while i < 10:
+        while True:
             lookup_key = input_buffer[0]
             lookup_state = stack[-1]
 
             lookup_result = self.table[lookup_key][lookup_state]
-            # print 'lr',lookup_result
+
             if lookup_result is None:
                 print '\t\t!!! Error!!!'
                 break
@@ -81,11 +79,11 @@ class SLRParser(object):
                 print '\t\t!!!Success!!!'
                 break
             else:
-                # print lookup_result
+
                 if lookup_result[0] == 's':
                     stack.append(input_buffer.pop(0))
                     stack.append(lookup_result[1])
-                    print 'shift', stack
+                    print ' After shift \t', stack
                 elif lookup_result[0] == 'r':
 
                     for i in range(2 * self.rule_length[lookup_result[1]]):
@@ -93,11 +91,10 @@ class SLRParser(object):
                     stack.append(self.rules_nt[lookup_result[1]])
                     lookup_result = self.table[stack[-1]][stack[-2]]
                     stack.append(lookup_result)
-                    print 'reduce', stack
+                    print ' After reduce \t', stack
                 else:
                     pass
 
-            i += 1
 
 parse_string1 = ['a', '+', 'a', '*', 'a', '+', 'a']
 parse_string2=list('a*a+a')
