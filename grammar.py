@@ -97,15 +97,15 @@ class Grammar(object):
         for i, rule in enumerate(rules):
             if rules[i][1]=='':
                 formattedRule += "'e'"
-            formattedRule += rules[i][1] + ' | '
+            formattedRule += ''.join(rules[i][1]) + ' | '
         return formattedRule[:-3]
 
 
-# rule1='S->A+B|A*B\
-#     ,A->a|b \
-#     ,B->c|d'
+rule1='S->A+B|A*B\
+    ,A->a|b \
+    ,B->c|d'
 
-
+    
 # rule2='A  -> Cd\
 # ,B -> Cg\
 # ,C -> fD\
@@ -117,4 +117,15 @@ class Grammar(object):
 #         T->FY,\
 #         Y->*FY|e,\
 #         F->(E\')|id'
-# Grammar(rule3)
+
+rule4=('s_a-> a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z ,'
+        'c_a-> A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z ,'
+        'start-> s_astart|c_astart ,'
+        'symbol-> !|@|#|$|%|^|&|*|(|)|_|+')
+
+rule5=('s_a-> a|b|c|d|e ,'
+        'c_a-> A|B|C|D|E ,'
+        'start-> s_astart|c_astart|s_a|c_a ,'
+        'symbol-> !|@|#|$|%')
+# a=Grammar(rule5)
+# a.print_grammar()

@@ -37,16 +37,17 @@ def parsePR(rules):
         production_rules[dummy_list[0]] = tuplelist
 
     terminals = list(set(terminals))
-    print "non terminals: ", non_terminals
-    print 'terminals: ', terminals
-    print "production rules: ", production_rules
-    print 'after checking for left recursion'
+    print "non terminals: \t\t\t", non_terminals
+    print 'terminals: \t\t\t\t', terminals
+    print "production rules: \t\t", production_rules
+    # print 'after left recursion\t',
     without_LR = remove_left_recursion_and_left_factoring(
         production_rules, 0)
-    print "production rules: ", without_LR
+    # print without_LR
+    # print 'after left factoring\t',
     without_LR_and_LF = remove_left_recursion_and_left_factoring(
         without_LR, 1)
-    print 'after left factoring', without_LR_and_LF
+    # print  without_LR_and_LF
     print '\n-----------------  END Parser -----------------\n\n'
 
     return (without_LR_and_LF.keys(), terminals,
@@ -59,7 +60,7 @@ def get_non_terminals(rules):
         dummy_list = item.split('->')
         dummy_list[0] = dummy_list[0].strip()
         non_terminals.append(dummy_list[0])
-    return non_terminals
+    return list(set(non_terminals))
 
 
 def get_rule_and_terminals(text, non_terminals):
@@ -185,9 +186,9 @@ def create_non_left_recursive_rules(LRrule):
 
 rule1 = 'S->A+B|A*B\
     ,A->Ac|Ab|f \
-    # ,B->c|d'
+    ,B->c|d'
 # result=parsePR(rulz)
 # removeLeftRecursion(result[2])
 
 rule2 = 'S->aA|aB,A->h,B->i'
-result=parsePR(rule1)
+# result=parsePR(rule1)
